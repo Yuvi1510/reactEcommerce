@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import baseApi from '../../js/BaseApi';
 
@@ -8,11 +8,27 @@ export default function AddProduct() {
     brand: '',
     description: '',
     price: '',
-    quantity: ''
+    quantity: '',
+    categoryId: ''
   });
   const [images, setImages] = useState([]);
   const [previewUrls, setPreviewUrls] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const [storeId, setStoreId] = useState(1);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const res = await baseApi.get('/categories');
+        setCategories(res.data);
+      } catch (error) {
+        console.error('Failed to fetch categories:', error);
+        toast.error('Failed to load categories.');
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,6 +62,8 @@ export default function AddProduct() {
     submitData.append('description', formData.description);
     submitData.append('price', formData.price);
     submitData.append('quantity', formData.quantity);
+    submitData.append('category', formData.categoryId);
+    submitData.append('storeId', storeId);
     
     images.forEach((img) => submitData.append('images', img));
 
@@ -66,7 +84,7 @@ export default function AddProduct() {
       toast.success("Product added successfully!");
       
       // Reset form
-      setFormData({ name: '', brand: '', description: '', price: '', quantity: '' });
+      setFormData({ name: '', brand: '', description: '', price: '', quantity: '', categoryId: '' });
       setImages([]);
       setPreviewUrls([]);
     } catch (error) {
@@ -91,6 +109,7 @@ export default function AddProduct() {
 
         <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 overflow-hidden">
           <form onSubmit={handleSubmit} className="p-8 sm:p-10">
+            <input type="hidden" name="storeId" value={storeId} />
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
               
               {/* Product Info Column */}
@@ -121,6 +140,23 @@ export default function AddProduct() {
                     className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 outline-none placeholder:text-zinc-400"
                     placeholder="e.g. Sony"
                   />
+                </div>
+
+                <div className="space-y-2">
+                  <label htmlFor="categoryId" className="block text-sm font-semibold text-zinc-700">Category</label>
+                  <select
+                    id="categoryId"
+                    name="categoryId"
+                    required
+                    // value={formData.categoryId}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 rounded-xl border border-zinc-200 bg-zinc-50 focus:bg-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent transition-all duration-200 outline-none text-zinc-700"
+                  >
+                    <option value="" disabled>Select a category</option>
+                    {categories.map(cat => (
+                      <option key={cat.id} value={cat.name}>{cat.name}</option>
+                    ))}
+                  </select>
                 </div>
 
                 <div className="space-y-2">

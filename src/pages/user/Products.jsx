@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
+import baseApi from "../../js/BaseApi";
 
 export default function Products(){
-
+ 
   const products = [
     {
       image: 'img1.jpg',
@@ -77,15 +78,20 @@ export default function Products(){
     }
   ];
 
+
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-emerald-50/30 py-16 px-4 sm:px-6 lg:px-8 font-sans">
+   <>
+
+    {/* all products  */}
+    <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-emerald-50/30 py-10 px-4 sm:px-6 lg:px-8 font-sans">
       {/* Header Section */}
-      <div className="max-w-7xl mx-auto mb-16 text-center">
-        <h1 className="text-4xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-600 tracking-tight mb-4">
-          Featured Collections
-        </h1>
-        <p className="text-lg text-zinc-500 max-w-2xl mx-auto">
-          Discover our handpicked selection of premium items designed to elevate your everyday experience.
+      <div className="max-w-7xl mx-auto mb-10 text-center">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-600 tracking-tight mb-2">
+          All Products
+        </h2>
+        <p className="text-md text-zinc-500 max-w-2xl mx-auto">
+          Explore our wide range of products.
         </p>
       </div>
 
@@ -154,5 +160,6 @@ export default function Products(){
         ))}
       </div>
     </div>
+    </>
   );
 }
