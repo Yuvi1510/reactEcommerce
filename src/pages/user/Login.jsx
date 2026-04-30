@@ -1,7 +1,14 @@
 import { useEffect, useState } from "react";
 import baseApi from "../../js/BaseApi";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setCartItems } from "../../js/cartSlice";
+import { setOrderItems } from "../../js/OrderSlice";
 
 export default function Login(){
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
     const [data, setData] = useState({
         "email": "",
         "password": ""
@@ -14,9 +21,28 @@ export default function Login(){
         });
     }
 
-    const handleSubmit = async () =>{
-        const res = await baseApi.post("/auth/login", data);
+    const handleSubmit = async (e) =>{
+        e.preventDefault();
+       
+        try{
+             const res = await baseApi.post("/auth/login", data);
+        console.log(res.data.token);
         localStorage.setItem("token", res.data.token);
+        
+        // Fetch cart items immediately to update navbar
+        try {
+            const cartRes = await baseApi.get("/cart");
+            dispatch(setCartItems(cartRes.data));
+            dispatch(setOrderItems(cartRes.data));
+        } catch (err) {
+            console.log("Failed to fetch cart on login:", err);
+        }
+
+        navigate("/");
+        toast.success("Login successful");
+        }catch{
+            toast.error("Invalid email or password");
+        }
         
     }
 
@@ -24,7 +50,7 @@ export default function Login(){
         <div className="h-[80vh] min-w-full flex items-center justify-center">
             <div className="border py-3 px-5 rounded-2xl">
                 <h1 className="text-center text-2xl">Login</h1>
-            <form className="flex flex-col items-center" action="">
+            <form onSubmit={handleSubmit} className="flex flex-col items-center" action="">
                 <div className="my-3">
                     <input onChange={handleChange} name="email" className="w-[250px] p-2 border rounded-2xl" type="text" placeholder="Email..." value={data.email} />
                 </div>

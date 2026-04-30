@@ -1,9 +1,12 @@
 import { useState } from "react";
 import baseApi from "../../js/BaseApi";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function Register(){
 
+    const navigate = useNavigate();
+    
     const [data, setData] = useState({
         firstName: "",
         lastName: "",
@@ -58,12 +61,20 @@ const handleSubmit = async (e) =>{
         };
         
         try{
-            const res = await baseApi.post("/users", dataToSent);
+            const res = await baseApi.post("/auth/register", dataToSent);
+            console.log(res.data);
             navigate("/login");
+            toast.success("Registration successful");
         }catch(error){
             console.log(error);
-            toast.error(error.response.data.message);
-            
+
+    const message =
+        error.response?.data?.message ||
+        error.response?.data ||
+        error.message ||
+        "Registration failed";
+
+    toast.error(message);
         }
     }
 }

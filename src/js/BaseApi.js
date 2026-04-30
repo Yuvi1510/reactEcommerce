@@ -12,8 +12,10 @@ const baseApi = axios.create({
 baseApi.interceptors.request.use((config) => {
     const token = localStorage.getItem("token");
 
-    if(token){
-        config.headers["Authorization"] = `Bearer ${token}`;
+     if (token && token !== "null" && token !== "undefined") {
+        config.headers.Authorization = `Bearer ${token}`;
+    } else {
+        delete config.headers.Authorization; // ✅ ensure it's removed
     }
 
     return config;

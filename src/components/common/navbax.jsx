@@ -1,8 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { NavLink, Link, useLocation } from 'react-router-dom';
 import { ShoppingCart, Search, Menu, X, ChevronDown, User, Store } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { setCartItems } from '../../js/cartSlice';
+import baseApi from '../../js/BaseApi';
 
-export default function Navbar() {
+export default function Navbar({categories}) {
+    const cartItems = useSelector(state => state.cart.items);
+    const dispatch = useDispatch();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
     const categoryRef = useRef(null);
@@ -13,6 +18,22 @@ export default function Navbar() {
         setIsMobileMenuOpen(false);
         setIsCategoriesOpen(false);
     }, [location.pathname]);
+
+    // Fetch cart items on mount if authenticated
+    useEffect(() => {
+        const fetchCart = async () => {
+            const token = localStorage.getItem("token");
+            if (token && token !== "null" && token !== "undefined") {
+                try {
+                    const res = await baseApi.get("/cart");
+                    dispatch(setCartItems(res.data));
+                } catch (err) {
+                    console.log("Failed to fetch cart:", err);
+                }
+            }
+        };
+        fetchCart();
+    }, [dispatch]);
 
     // Close categories dropdown when clicking outside
     useEffect(() => {
@@ -25,10 +46,6 @@ export default function Navbar() {
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
 
-    const categories = [
-        "Electronics", "Fashion & Clothing", "Home & Garden",
-        "Sports & Outdoors", "Beauty & Personal Care", "Toys & Games"
-    ];
 
     return (
         <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b border-zinc-100 shadow-sm font-sans">
@@ -76,10 +93,10 @@ export default function Navbar() {
                                         {categories.map((cat, idx) => (
                                             <Link 
                                                 key={idx} 
-                                                to={`/categories?filter=${cat.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`}
+                                                to={`/categories/${cat.categoryId}`}
                                                 className="block px-4 py-2.5 text-sm text-zinc-700 font-medium hover:bg-zinc-50 hover:text-emerald-600 rounded-xl transition-colors"
                                             >
-                                                {cat}
+                                                {cat.name}
                                             </Link>
                                         ))}
                                     </div>
@@ -112,7 +129,7 @@ export default function Navbar() {
                         <Link to="/cart" className="relative p-2 text-zinc-600 hover:text-emerald-600 hover:bg-zinc-50 rounded-full transition-all">
                             <ShoppingCart className="w-5 h-5" />
                             <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">
-                                3
+                                {cartItems.length}
                             </span>
                         </Link>
 
@@ -134,7 +151,7 @@ export default function Navbar() {
                         <Link to="/cart" className="relative p-2 text-zinc-600 hover:text-emerald-600">
                             <ShoppingCart className="w-6 h-6" />
                             <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-[10px] font-bold flex items-center justify-center rounded-full border-2 border-white">
-                                3
+                                {cartItems.length}
                             </span>
                         </Link>
                         <button 
@@ -172,8 +189,8 @@ export default function Navbar() {
                             <div className="font-bold text-zinc-400 text-xs uppercase tracking-wider mb-3">Categories</div>
                             <div className="grid grid-cols-2 gap-2">
                                 {categories.slice(0, 4).map((cat, idx) => (
-                                    <Link key={idx} to={`/categories?filter=${cat.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-')}`} className="text-sm text-zinc-600 hover:text-emerald-600 py-1 font-medium">
-                                        {cat}
+                                    <Link key={idx} to={`/categories/${cat.categoryId}`} className="text-sm text-zinc-600 hover:text-emerald-600 py-1 font-medium">
+                                        {cat.name}
                                     </Link>
                                 ))}
                                 <Link to="/categories" className="text-sm text-emerald-600 py-1 font-bold">

@@ -66,7 +66,7 @@ export default function Carousel(){
     return (
       <div className="relative overflow-hidden group">
 
-        <div className={` flex min-w-full h-[500px] transition-transform duration-500 ease-in-out `}
+        <div className={` flex min-w-full h-[550px] transition-transform duration-500 ease-in-out `}
         style={{ 
           transform: `translateX(-${currentSlide * 100}%)`,
           transition: isAnimating ? "transform 500ms ease-in-out" : "none" 

@@ -15,7 +15,7 @@ export default function AddProduct() {
   const [previewUrls, setPreviewUrls] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [storeId, setStoreId] = useState(1);
+  // const [storeId, setStoreId] = useState(1);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -63,7 +63,7 @@ export default function AddProduct() {
     submitData.append('price', formData.price);
     submitData.append('quantity', formData.quantity);
     submitData.append('category', formData.categoryId);
-    submitData.append('storeId', storeId);
+    // submitData.append('storeId', storeId);
     
     images.forEach((img) => submitData.append('images', img));
 
