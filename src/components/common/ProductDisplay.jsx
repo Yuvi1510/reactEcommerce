@@ -3,10 +3,12 @@ import baseApi from "../../js/BaseApi";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../../js/cartSlice";
+import { useState } from "react";
 
 export default function ProductDisplay({ products, title, subtitle }) {
 
   const dispatch = useDispatch();
+  const [orderItems, setOrderItems] = useState([]);
 
   const addProductToCart = async (productId) => {
     try {
@@ -16,6 +18,22 @@ export default function ProductDisplay({ products, title, subtitle }) {
     } catch (error) {
       console.log(error)
       toast.error("Login to add product to cart!");
+    }
+  }
+
+  const buyNow = async (productId, quantity) => {
+    const item = { "productId": productId, "quantity": quantity };
+    const updatedOrderItems = [...orderItems, item];
+    setOrderItems(updatedOrderItems);
+    console.log(updatedOrderItems) 
+    try {
+      const res = await baseApi.post("/orders", updatedOrderItems);
+      console.log(res.data);
+      toast.success(res.data.message);
+      navigate("/payment");
+    } catch (error) {
+      console.log(error)
+      toast.error("Login to buy product!");
     }
   }
 
@@ -94,6 +112,7 @@ export default function ProductDisplay({ products, title, subtitle }) {
                   onClick={(e) => {
                     e.preventDefault();
                     e.stopPropagation();
+                    buyNow(product.productId, 1);
                   }}
                   className="hover:cursor-pointer flex-1 bg-zinc-900 text-white px-4 py-3 rounded-xl font-semibold hover:bg-emerald-600 transition-colors duration-300 shadow-md active:scale-95 flex justify-center items-center gap-2"
                 >
