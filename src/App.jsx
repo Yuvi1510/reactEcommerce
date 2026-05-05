@@ -24,6 +24,9 @@ import ScrollToTop from './components/common/ScrollToTop';
 import Cart from './pages/user/Cart';
 import AddressContact from './pages/user/AddressContact';
 import Payment from './pages/user/Payment';
+import CarouselForm from './components/admin/CarouselForm';
+import AdminDashboard from './components/admin/AdminDashboard';
+import Users from './components/admin/Users';
 
 function App() {
 
@@ -90,7 +93,11 @@ function App() {
         </Route>
         
         {/* routes for admin page  */}
-        <Route path='/admin' element={<AdminPage/>}></Route>
+        <Route path='/admin' element={<AdminPage/>}>
+          <Route index path='dashboard' element={<AdminDashboard/>}></Route>
+          <Route path='carousel' element={<CarouselForm/>}></Route>
+          <Route path='users' element={<Users/>}></Route>
+        </Route>
       </Routes>
     
     </BrowserRouter>

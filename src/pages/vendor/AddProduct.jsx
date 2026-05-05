@@ -63,7 +63,7 @@ export default function AddProduct() {
     submitData.append('price', formData.price);
     submitData.append('quantity', formData.quantity);
     submitData.append('category', formData.categoryId);
-    // submitData.append('storeId', storeId);
+    // submitData.append('storeId', storeId); 
     
     images.forEach((img) => submitData.append('images', img));
 
@@ -109,7 +109,7 @@ export default function AddProduct() {
 
         <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-zinc-100 overflow-hidden">
           <form onSubmit={handleSubmit} className="p-8 sm:p-10">
-            <input type="hidden" name="storeId" value={storeId} />
+            {/* <input type="hidden" name="storeId" value={storeId} /> */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
               
               {/* Product Info Column */}

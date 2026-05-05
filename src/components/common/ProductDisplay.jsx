@@ -1,16 +1,18 @@
 import { NavLink } from "react-router-dom";
 import baseApi from "../../js/BaseApi";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../../js/cartSlice";
 import { useState } from "react";
 
 export default function ProductDisplay({ products, title, subtitle }) {
 
   const dispatch = useDispatch();
+  const {items} = useSelector(state => state.cart)
   const [orderItems, setOrderItems] = useState([]);
 
   const addProductToCart = async (productId) => {
+    console.log("Items in cart:", items);
     try {
       const res = await baseApi.post(`/cart/add?productId=${productId}`);
       console.log(res.data);
@@ -27,10 +29,10 @@ export default function ProductDisplay({ products, title, subtitle }) {
     setOrderItems(updatedOrderItems);
     console.log(updatedOrderItems) 
     try {
+      // navigate("/payment");
       const res = await baseApi.post("/orders", updatedOrderItems);
       console.log(res.data);
       toast.success(res.data.message);
-      navigate("/payment");
     } catch (error) {
       console.log(error)
       toast.error("Login to buy product!");
@@ -93,7 +95,7 @@ export default function ProductDisplay({ products, title, subtitle }) {
               {/* Price and Rating (Visual Additions) */}
               <div className="flex items-center justify-between mt-auto mb-6">
                 <span className="text-2xl font-black text-zinc-900">
-                  $99.00
+                  {product.price}
                 </span>
                 <div className="flex items-center gap-1 bg-amber-50 px-2 py-1 rounded-lg border border-amber-100">
                   <svg
@@ -137,6 +139,7 @@ export default function ProductDisplay({ products, title, subtitle }) {
                     e.stopPropagation();
                     dispatch(addToCart(product.productId))
                     addProductToCart(product.productId)
+        
                   }}
                   className="hover:cursor-pointer flex-1 bg-white text-zinc-700 px-4 py-3 rounded-xl font-semibold hover:bg-zinc-50 transition-colors duration-300 active:scale-95 flex justify-center items-center gap-2 border border-zinc-200 hover:border-zinc-300 hover:text-zinc-900"
                 >

@@ -17,10 +17,11 @@ const cartSlice = createSlice({
             );
 
             if (existing) {
-                existing.quantity += 1;
+                return;
             } else {
                 state.items.push({ ...action.payload, quantity: 1 });
             }
+
 },
         removeFromCart: (state, action) => {
             state.items = state.items.filter((item) => item.productId !== action.payload);

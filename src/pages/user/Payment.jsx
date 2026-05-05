@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { ArrowLeft, CheckCircle2, ShieldCheck, CreditCard } from "lucide-react";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import baseApi from "../../js/BaseApi";
 
 export default function Payment() {
   const navigate = useNavigate();
   const [selectedMethod, setSelectedMethod] = useState("");
   const orderItems = useSelector((state) => state.order.orderItems);
 
-  const handlePayment = () => {
+  const handlePayment = async () => {
     if (!selectedMethod) {
       toast.error("Please select a payment method");
       return;
@@ -17,7 +18,14 @@ export default function Payment() {
     // Simulate API call for payment/order placement
     toast.success("Order placed successfully!");
     console.log(orderItems);
-    navigate("/"); // Redirect to home or order success page
+    try{
+      const res = await baseApi.post("/orders", orderItems);
+      toast.success("Order placed successfully");
+      navigate("/"); // Redirect to home or order success page
+    }catch(e){
+      console.log(e.res);
+      toast.error("Failed to place order");
+    }
   };
 
   const paymentMethods = [

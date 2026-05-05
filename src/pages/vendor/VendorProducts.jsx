@@ -15,7 +15,7 @@ export default function VendorProducts() {
     const fetchStoreProducts = async () => {
       try {
         setIsLoading(true);
-        const res = await baseApi.get(`/stores/${storeId}/products`);
+        const res = await baseApi.get(`/stores/products`);
         
         // Handle common API response patterns for "store" endpoint
         // It might return an array of products directly, or a store object with a products array.

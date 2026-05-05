@@ -5,6 +5,7 @@ import { Trash2, Plus, Minus, ArrowRight, ShoppingCart } from "lucide-react";
 import { toast } from "react-toastify";
 import { useDispatch } from "react-redux";
 import { addToOrderList, removeFromOrderList, setOrderItems } from "../../js/OrderSlice";
+import { clearCart, removeFromCart } from "../../js/cartSlice";
 
 export default function Cart() {
     const dispatch = useDispatch();
@@ -30,13 +31,13 @@ export default function Cart() {
     fetchCartItems();
   }, []);
 
-  const handleQuantityChange = (productId, newQuantity) => {
+  const handleQuantityChange = (cartItemId, productId, newQuantity) => {
     if (newQuantity < 1) return;
 
     // Optimistically update the UI
     setCartItems((prevItems) =>
       prevItems.map((item) => {
-        if (item.id === productId) {
+        if (item.cartItemId === cartItemId) {
           return {
             ...item,
             quantity: newQuantity,
@@ -87,10 +88,11 @@ export default function Cart() {
   });
 };
 
-  const handleRemoveItem = async (productId) => {
+  const handleRemoveItem = async (cartItemId) => {
     try {
-      setCartItems((prev) => prev.filter((item) => item.id !== productId));
-      await baseApi.delete(`/cart/remove?productId=${productId}`);
+      setCartItems((prev) => prev.filter((item) => item.cartItemId !== cartItemId));
+      dispatch(removeFromCart(cartItemId))
+      await baseApi.delete(`/cart/remove/${cartItemId}`);
       toast.success("Item removed from cart");
     } catch (error) {
       console.error("Failed to remove item", error);
@@ -103,6 +105,7 @@ export default function Cart() {
     try {
       setCartItems([]);
       await baseApi.delete("/cart/clear");
+      dispatch(clearCart());
       toast.success("Cart cleared");
     } catch (error) {
       console.error("Failed to clear cart", error);
@@ -188,7 +191,7 @@ export default function Cart() {
                       <div className="flex items-center gap-4">
                         <div className="flex items-center border border-zinc-200 rounded-xl bg-white shadow-sm overflow-hidden">
                           <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                            onClick={() => handleQuantityChange(item.cartItemId, item.quantity - 1)}
                             className="p-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
                             disabled={item.quantity <= 1}
                           >
@@ -198,7 +201,7 @@ export default function Cart() {
                             {item.quantity}
                           </span>
                           <button
-                            onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                            onClick={() => handleQuantityChange(item.cartItemId,item.productId, item.quantity + 1)}
                             className="p-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
                           >
                             <Plus className="w-4 h-4" />
@@ -212,7 +215,7 @@ export default function Cart() {
                         </div>
 
                         <button
-                          onClick={() => handleRemoveItem(item.id)}
+                          onClick={() => handleRemoveItem(item.cartItemId)}
                           className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
                           title="Remove item"
                         >
