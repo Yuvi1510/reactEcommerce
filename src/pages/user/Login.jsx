@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import baseApi from "../../js/BaseApi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setCartItems } from "../../js/cartSlice";
 import { setOrderItems } from "../../js/OrderSlice";
+import { loginSuccess } from "../../js/authSlice";
 
 export default function Login(){
     const navigate = useNavigate();
@@ -26,9 +27,12 @@ export default function Login(){
        
         try{
              const res = await baseApi.post("/auth/login", data);
-        console.log(res.data.token);
+        console.log(res);
         localStorage.setItem("token", res.data.token);
-        
+            dispatch(loginSuccess({
+                user: res.data.user,
+                token: res.data.token
+            }));
         // Fetch cart items immediately to update navbar
         try {
             const cartRes = await baseApi.get("/cart");
@@ -37,7 +41,7 @@ export default function Login(){
         } catch (err) {
             console.log("Failed to fetch cart on login:", err);
         }
-
+        // console.log(useSelector(state => state.auth.isLoggedIn));
         navigate("/");
         toast.success("Login successful");
         }catch{

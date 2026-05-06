@@ -3,11 +3,12 @@ import { useNavigate } from "react-router-dom";
 import baseApi from "../../js/BaseApi";
 import { Trash2, Plus, Minus, ArrowRight, ShoppingCart } from "lucide-react";
 import { toast } from "react-toastify";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToOrderList, removeFromOrderList, setOrderItems } from "../../js/OrderSlice";
 import { clearCart, removeFromCart } from "../../js/cartSlice";
 
 export default function Cart() {
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
     const dispatch = useDispatch();
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -15,7 +16,13 @@ export default function Cart() {
   const debounceTimers = useRef({});
 
   const fetchCartItems = async () => {
+    if(!isLoggedIn){
+      toast.error("Please login to view cart");
+      navigate("/");
+      return;
+    }
     try {
+      
       const res = await baseApi.get("/cart");
       const itemsWithSelection = res.data.map(item => ({...item, isSelected: true}));
       setCartItems(itemsWithSelection);

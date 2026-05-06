@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import baseApi from '../../js/BaseApi';
+import { Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function VendorProducts() {
   const [products, setProducts] = useState([]);
@@ -42,6 +45,17 @@ export default function VendorProducts() {
 
     fetchStoreProducts();
   }, [storeId]);
+
+  const deleteProduct = async (productId) => {
+    try {
+      await baseApi.delete(`/products/${productId}`);
+      setProducts(products.filter(p => p.productId !== productId));
+      toast.success("Product deleted Successfully!")
+    } catch (err) {
+      console.error("Failed to delete product", err);
+      toast.error("Failed to delete product");
+    }
+  };
 
   return (
     <div className="min-h-screen bg-zinc-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
@@ -150,11 +164,19 @@ export default function VendorProducts() {
                     <span className="text-xl font-extrabold text-zinc-900">
                       ${Number(product.price || 0).toFixed(2)}
                     </span>
-                    <button className="p-2 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-colors">
+                    <Link to={`/vendor/products/edit/${product.productId}`} 
+                    className="p-2 text-zinc-400 hover:text-emerald-500 hover:bg-emerald-50 rounded-lg transition-colors">
                       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                       </svg>
-                    </button>
+                    </Link>
+                    <button
+                      onClick={()=> deleteProduct(product.productId)}
+                          className="p-2 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors"
+                          title="Remove item"
+                        >
+                          <Trash2 className="w-5 h-5" />
+                        </button>
                   </div>
                 </div>
               </div>

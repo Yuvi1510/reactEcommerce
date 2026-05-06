@@ -1,18 +1,22 @@
 import { useState, useRef, useEffect } from 'react';
-import { NavLink, Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, Search, Menu, X, ChevronDown, User, Store } from 'lucide-react';
+import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
+import { ShoppingCart, Search, Menu, X, ChevronDown, User, Store, StoreIcon } from 'lucide-react';
 import { useSelector, useDispatch } from 'react-redux';
-import { setCartItems } from '../../js/cartSlice';
+import { clearCart, setCartItems } from '../../js/cartSlice';
 import baseApi from '../../js/BaseApi';
+import { logout } from '../../js/authSlice';
+import { toast } from 'react-toastify';
 
 export default function Navbar({categories}) {
+    const navigate = useNavigate();
+    const {isLoggedIn, user} = useSelector(state => state.auth);
     const cartItems = useSelector(state => state.cart.items);
     const dispatch = useDispatch();
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
     const categoryRef = useRef(null);
     const location = useLocation();
-
+    console.log("user:", user);
     // Close mobile menu on route change
     useEffect(() => {
         setIsMobileMenuOpen(false);
@@ -23,9 +27,11 @@ export default function Navbar({categories}) {
     useEffect(() => {
         const fetchCart = async () => {
             const token = localStorage.getItem("token");
+            console.log("isLoggedIn:", isLoggedIn);
             if (token && token !== "null" && token !== "undefined") {
                 try {
                     const res = await baseApi.get("/cart");
+                    
                     dispatch(setCartItems(res.data));
                 } catch (err) {
                     console.log("Failed to fetch cart:", err);
@@ -45,6 +51,17 @@ export default function Navbar({categories}) {
         document.addEventListener('mousedown', handleClickOutside);
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, []);
+
+    const handleLogout = () => {
+    
+        dispatch(logout());
+        dispatch(clearCart());
+        console.log(localStorage.getItem("token")) 
+        localStorage.removeItem("token");
+        console.log(localStorage.getItem("token"))
+        toast.success("Logout successfully");
+        navigate("/login");
+    };
 
 
     return (
@@ -134,16 +151,43 @@ export default function Navbar({categories}) {
                         </Link>
 
                         <div className="h-6 w-px bg-zinc-200 mx-1"></div>
+                        <Link to="/orders" className="relative p-2 text-zinc-600 hover:text-emerald-600 hover:bg-zinc-50 rounded-full transition-all">
+                            <StoreIcon className="w-5 h-5" />
+                        </Link>
 
-                        <Link to="/login" className="flex items-center gap-2 text-sm font-bold text-zinc-700 hover:text-emerald-600 transition-colors">
+                        <div className="h-6 w-px bg-zinc-200 mx-1"></div>
+
+                        {
+                            isLoggedIn? (
+                                <>
+                                <button onClick={handleLogout} className="hover:cursor-pointer flex items-center gap-2 text-sm font-bold text-zinc-700 hover:text-emerald-600 transition-colors">
+                            <User className="w-4 h-4" />
+                                Logout
+                        </button>
+
+                        {user && user.store == null && (
+                            <Link to="/store-registration" className="hover:cursor-pointer flex items-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-emerald-600 text-white text-sm font-bold rounded-full transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                <Store className="w-4 h-4" />
+                                Become a Vendor
+                            </Link>
+                        )}
+                        {user &&user.store != null && (
+                            <Link to="/vendor" className="hover:cursor-pointer flex items-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-emerald-600 text-white text-sm font-bold rounded-full transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
+                                <Store className="w-4 h-4" />
+                                Dashboard
+                            </Link>
+                        )}
+                        
+                        </>
+                            ):(
+                                <Link to="/login" className="flex items-center gap-2 text-sm font-bold text-zinc-700 hover:text-emerald-600 transition-colors">
                             <User className="w-4 h-4" />
                             Sign In
                         </Link>
                         
-                        <Link to="/store-registration" className="flex items-center gap-2 px-5 py-2.5 bg-zinc-900 hover:bg-emerald-600 text-white text-sm font-bold rounded-full transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                            <Store className="w-4 h-4" />
-                            Become a Vendor
-                        </Link>
+        
+                            )
+                        }
                     </div>
 
                     {/* Mobile Menu Button */}
@@ -204,15 +248,36 @@ export default function Navbar({categories}) {
                     </nav>
 
                     <div className="flex flex-col gap-3 pt-4 border-t border-zinc-100">
-                        <Link to="/login" className="flex items-center justify-center gap-2 w-full py-3 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-xl font-bold hover:bg-zinc-100 transition-colors">
-                            <User className="w-5 h-5" />
-                            Sign In
-                        </Link>
-                        <Link to="/store-registration" className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-md">
-                            <Store className="w-5 h-5" />
-                            Become a Vendor
-                        </Link>
-                    </div>
+
+  {isLoggedIn ? (
+    <>
+      <button
+        onClick={handleLogout}
+        className="flex items-center justify-center gap-2 w-full py-3 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-xl font-bold hover:bg-zinc-100 transition-colors"
+      >
+        <User className="w-5 h-5" />
+        Logout
+      </button>
+
+      <Link
+        to="/store-registration"
+        className="flex items-center justify-center gap-2 w-full py-3 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 transition-colors shadow-md"
+      >
+        <Store className="w-5 h-5" />
+        Become a Vendor
+      </Link>
+    </>
+  ) : (
+    <Link
+      to="/login"
+      className="flex items-center justify-center gap-2 w-full py-3 bg-zinc-50 text-zinc-700 border border-zinc-200 rounded-xl font-bold hover:bg-zinc-100 transition-colors"
+    >
+      <User className="w-5 h-5" />
+      Sign In
+    </Link>
+  )}
+
+</div>
                 </div>
             </div>
         </header>

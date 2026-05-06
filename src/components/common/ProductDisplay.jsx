@@ -14,6 +14,7 @@ export default function ProductDisplay({ products, title, subtitle }) {
   const addProductToCart = async (productId) => {
     console.log("Items in cart:", items);
     try {
+      dispatch(addToCart(productId));
       const res = await baseApi.post(`/cart/add?productId=${productId}`);
       console.log(res.data);
       toast.success(res.data.message);

@@ -27,6 +27,8 @@ import Payment from './pages/user/Payment';
 import CarouselForm from './components/admin/CarouselForm';
 import AdminDashboard from './components/admin/AdminDashboard';
 import Users from './components/admin/Users';
+import EditProduct from './pages/vendor/EditProduct';
+import MyOrders from './pages/user/MyOrders';
 
 function App() {
 
@@ -81,6 +83,7 @@ function App() {
           <Route path='/register' element={<Register/>}></Route>
           <Route path='/store-registration' element={<StoreRegistration/>}></Route>
           <Route path='/products/:productId' element={<ProductDetail/>}></Route>
+          <Route path='/orders' element={<MyOrders/>}></Route>
         </Route>
         
           
@@ -90,6 +93,7 @@ function App() {
           <Route path='add-product' element={<AddProduct/>}></Route>
           <Route path='products' element={<VendorProducts/>}></Route>
           <Route path='orders' element={<Orders/>}></Route>
+          <Route path='products/edit/:productId' element={<EditProduct/>}></Route>
         </Route>
         
         {/* routes for admin page  */}

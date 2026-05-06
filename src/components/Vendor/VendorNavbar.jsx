@@ -10,6 +10,14 @@ export default function VendorNavbar() {
                 <ul className="flex space-x-6">
                     <li>
                         <Link 
+                            to="/vendor" 
+                            className="hover:text-zinc-300 transition-colors"
+                        >
+                            Dashboard
+                        </Link>
+                    </li>
+                    <li>
+                        <Link 
                             to="/vendor/products" 
                             className="hover:text-zinc-300 transition-colors"
                         >

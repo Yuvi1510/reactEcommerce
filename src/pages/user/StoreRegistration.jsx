@@ -54,10 +54,8 @@ export default function StoreRegister() {
         try {
             const res = await baseApi.post("/stores", data);
 
-           if(res.data.store != null){
             toast.success("store registration successful");
             navigate("/vendor");
-           }
         } catch (error) {
             const message =
                 error?.response?.data?.message || "Something went wrong";
