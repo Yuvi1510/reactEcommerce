@@ -12,19 +12,27 @@ export default function Payment() {
 
   const handlePayment = async () => {
     if (!selectedMethod) {
-      toast.error("Please select a payment method");
+      toast.error("Please select a payment method", {
+    autoClose: 1000 // 1 second
+}); 
       return;
     }
     // Simulate API call for payment/order placement
-    toast.success("Order placed successfully!");
+    toast.success("Order placed successfully!", {
+    autoClose: 1000 // 1 second
+});
     console.log(orderItems);
     try{
       const res = await baseApi.post("/orders", orderItems);
-      toast.success("Order placed successfully");
+      toast.success("Order placed successfully", {
+    autoClose: 1000 // 1 second
+});
       navigate("/"); // Redirect to home or order success page
     }catch(e){
       console.log(e.res);
-      toast.error("Failed to place order");
+      toast.error("Failed to place order", {
+    autoClose: 1000 // 1 second
+});
     }
   };
 

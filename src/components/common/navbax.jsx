@@ -17,6 +17,7 @@ export default function Navbar({categories}) {
     const categoryRef = useRef(null);
     const location = useLocation();
     console.log("user:", user);
+    console.log("isLoggedin:", isLoggedIn);
     // Close mobile menu on route change
     useEffect(() => {
         setIsMobileMenuOpen(false);

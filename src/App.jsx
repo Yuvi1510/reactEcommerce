@@ -29,6 +29,9 @@ import AdminDashboard from './components/admin/AdminDashboard';
 import Users from './components/admin/Users';
 import EditProduct from './pages/vendor/EditProduct';
 import MyOrders from './pages/user/MyOrders';
+import AdminProducts from './components/admin/AdminProducts';
+import AdminOrders from './components/admin/AdminOrders';
+import Stores from './components/admin/Stores';
 
 function App() {
 
@@ -97,11 +100,14 @@ function App() {
         </Route>
         
         {/* routes for admin page  */}
-        <Route path='/admin' element={<AdminPage/>}>
-          <Route index path='dashboard' element={<AdminDashboard/>}></Route>
-          <Route path='carousel' element={<CarouselForm/>}></Route>
-          <Route path='users' element={<Users/>}></Route>
-        </Route>
+        <Route path='/admin' element={<AdminPage />}>
+  <Route index path='dashboard' element={<AdminDashboard />} />
+  <Route path='carousel' element={<CarouselForm />} />
+  <Route path='products' element={<AdminProducts products={products} />} />
+  <Route path='orders' element={<AdminOrders />} />
+  <Route path='users' element={<Users />} />
+  <Route path='stores' element={<Stores/>} />
+</Route>
       </Routes>
     
     </BrowserRouter>

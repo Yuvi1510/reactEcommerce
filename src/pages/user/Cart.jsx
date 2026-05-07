@@ -17,7 +17,9 @@ export default function Cart() {
 
   const fetchCartItems = async () => {
     if(!isLoggedIn){
-      toast.error("Please login to view cart");
+      toast.error("Please login to view cart", {
+    autoClose: 1000 // 1 second
+});
       navigate("/");
       return;
     }
@@ -67,7 +69,9 @@ export default function Cart() {
         toast.success("Quantity updated", { autoClose: 1000 });
       } catch (error) {
         console.error("Failed to update quantity", error);
-        toast.error("Failed to update quantity");
+        toast.error("Failed to update quantity", {
+    autoClose: 1000 // 1 second
+});
         // Fallback: fetch cart items again if it fails
         fetchCartItems();
       }
@@ -100,10 +104,14 @@ export default function Cart() {
       setCartItems((prev) => prev.filter((item) => item.cartItemId !== cartItemId));
       dispatch(removeFromCart(cartItemId))
       await baseApi.delete(`/cart/remove/${cartItemId}`);
-      toast.success("Item removed from cart");
+      toast.success("Item removed from cart", {
+    autoClose: 1000 // 1 second
+});
     } catch (error) {
       console.error("Failed to remove item", error);
-      toast.error("Failed to remove item");
+      toast.error("Failed to remove item", {
+    autoClose: 1000 // 1 second
+});
       fetchCartItems(); // restore state on fail
     }
   };
@@ -113,10 +121,14 @@ export default function Cart() {
       setCartItems([]);
       await baseApi.delete("/cart/clear");
       dispatch(clearCart());
-      toast.success("Cart cleared");
+      toast.success("Cart cleared", {
+    autoClose: 1000 // 1 second
+});
     } catch (error) {
       console.error("Failed to clear cart", error);
-      toast.error("Failed to clear cart");
+      toast.error("Failed to clear cart", {
+    autoClose: 1000 // 1 second
+});
       fetchCartItems(); // restore state on fail
     }
   };
@@ -198,7 +210,7 @@ export default function Cart() {
                       <div className="flex items-center gap-4">
                         <div className="flex items-center border border-zinc-200 rounded-xl bg-white shadow-sm overflow-hidden">
                           <button
-                            onClick={() => handleQuantityChange(item.cartItemId, item.quantity - 1)}
+                            onClick={() => handleQuantityChange(item.cartItemId,item.productId, item.quantity - 1)}
                             className="p-2 text-zinc-500 hover:text-zinc-900 hover:bg-zinc-100 transition-colors"
                             disabled={item.quantity <= 1}
                           >

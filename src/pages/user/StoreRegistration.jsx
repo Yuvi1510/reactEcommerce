@@ -2,8 +2,12 @@ import { useState } from "react";
 import baseApi from "../../js/BaseApi";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { loginSuccess } from "../../js/authSlice";
 
 export default function StoreRegister() {
+
+    const {user} = useSelector(state => state.auth);
 
     const navigate = useNavigate();
 
@@ -47,19 +51,32 @@ export default function StoreRegister() {
         e.preventDefault();
 
         if (!data.name || !data.email || !data.phone) {
-            toast.error("All fields are required");
+            toast.error("All fields are required", {
+    autoClose: 1000 // 1 second
+});
             return;
         }
 
         try {
             const res = await baseApi.post("/stores", data);
 
-            toast.success("store registration successful");
+            const userRes = await baseApi.get(`/users/${user.userId}`);
+            
+            useDispatch(loginSuccess({
+                user: userRes.data,
+                token: localStorage.getItem("token")
+            }));
+
+            toast.success("store registration successful", {
+    autoClose: 1000 // 1 second
+});
             navigate("/vendor");
         } catch (error) {
             const message =
                 error?.response?.data?.message || "Something went wrong";
-            toast.error(message);
+            toast.error(message, {
+    autoClose: 1000 // 1 second
+});
         }
     };
 

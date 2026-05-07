@@ -64,7 +64,9 @@ const handleSubmit = async (e) =>{
             const res = await baseApi.post("/auth/register", dataToSent);
             console.log(res.data);
             navigate("/login");
-            toast.success("Registration successful");
+            toast.success("Registration successful", {
+    autoClose: 1000 // 1 second
+});
         }catch(error){
             console.log(error);
 
@@ -74,7 +76,9 @@ const handleSubmit = async (e) =>{
         error.message ||
         "Registration failed";
 
-    toast.error(message);
+    toast.error(message, {
+    autoClose: 1000 // 1 second
+});
         }
     }
 }

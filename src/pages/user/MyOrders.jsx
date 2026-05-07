@@ -14,7 +14,9 @@ export default function MyOrders() {
             setOrders(res.data);
         } catch (error) {
             console.log(error);
-            toast.error("Failed to fetch orders");
+            toast.error("Failed to fetch orders", {
+    autoClose: 1000 // 1 second
+});
         } finally {
             setLoading(false);
         }
@@ -23,27 +25,37 @@ export default function MyOrders() {
     const handleCancelOrder = async (orderId) => {
         try {
             await baseApi.put(`/orders/cancel/${orderId}`);
-            toast.success("Order cancelled successfully");
+            toast.success("Order cancelled successfully", {
+    autoClose: 1000 // 1 second
+});
             fetchMyOrders();
         } catch (error) {
             console.log(error);
-            toast.error("Failed to cancel order");
+            toast.error("Failed to cancel order", {
+    autoClose: 1000 // 1 second
+});
         }
     };
 
     const handleMarkAsDelivered = async (orderId) => {
         try {
             await baseApi.put(`/orders/${orderId}/deliver`);
-            toast.success("Order marked as delivered");
+            toast.success("Order marked as delivered", {
+    autoClose: 1000 // 1 second
+});
             fetchMyOrders();
         } catch (error) {
             console.log(error);
-            toast.error("Failed to mark order as delivered");
+            toast.error("Failed to mark order as delivered", {
+    autoClose: 1000 // 1 second
+});
         }
     };
 
     const handlePayment = (order) => {
-        toast.info("Proceed to payment gateway");
+        toast.info("Proceed to payment gateway", {
+    autoClose: 1000 // 1 second
+});
     };
 
     useEffect(() => {

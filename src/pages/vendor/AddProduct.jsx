@@ -81,7 +81,9 @@ export default function AddProduct() {
       });
       console.log(res.data);
       
-      toast.success("Product added successfully!");
+      toast.success("Product added successfully!", {
+    autoClose: 1000 // 1 second
+});
       
       // Reset form
       setFormData({ name: '', brand: '', description: '', price: '', quantity: '', categoryId: '' });
@@ -89,7 +91,9 @@ export default function AddProduct() {
       setPreviewUrls([]);
     } catch (error) {
       console.error(error);
-      toast.error("Failed to add product.");
+      toast.error("Failed to add product.", {
+    autoClose: 1000 // 1 second
+});
     } finally {
       setIsSubmitting(false);
     }

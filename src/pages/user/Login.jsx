@@ -43,9 +43,13 @@ export default function Login(){
         }
         // console.log(useSelector(state => state.auth.isLoggedIn));
         navigate("/");
-        toast.success("Login successful");
+        toast.success("Login successful", {
+    autoClose: 1000 // 1 second
+});
         }catch{
-            toast.error("Invalid email or password");
+            toast.error("Invalid email or password", {
+    autoClose: 1000 // 1 second
+});
         }
         
     }

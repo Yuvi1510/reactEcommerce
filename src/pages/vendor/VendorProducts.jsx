@@ -50,10 +50,14 @@ export default function VendorProducts() {
     try {
       await baseApi.delete(`/products/${productId}`);
       setProducts(products.filter(p => p.productId !== productId));
-      toast.success("Product deleted Successfully!")
+      toast.success("Product deleted Successfully!", {
+    autoClose: 1000 // 1 second
+})
     } catch (err) {
       console.error("Failed to delete product", err);
-      toast.error("Failed to delete product");
+      toast.error("Failed to delete product", {
+    autoClose: 1000 // 1 second
+});
     }
   };
 
